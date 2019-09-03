@@ -38,65 +38,27 @@ int checkDoubleRed(node* temp){
     return 0; // all nodes are black in proximity
 }
 
-// node* leftRotation(node* node_x){
-//     // to apply node_x = leftRotation(node_x)
-    
-//     // changing parents
-//     node_x->right->parent = node_x->parent;
-//     node_x->parent = node_x->right;
-
-//     // swaping
-//     node* temp1 = node_x->right->left;
-//     node_x->right->left = node_x;
-//     node* temp2 = node_x->right;
-//     node_x->right = temp1;
-//     return temp2;
-// }
-
-// node* rightRotation(node* node_x){
-//     // to apply node_x = rightRotation(node_x)
-
-//     // changing parents
-//     node_x->left->parent = node_x->parent;
-//     node_x->parent = node_x->left;
-
-//     // swaping
-//     node* temp = node_x->left->right;
-//     node_x->left->right = node_x;
-//     node* temp2 = node_x->left;
-//     node_x->left = temp;
-//     return temp2;
-// }
-
+// left Rotation
 void LeftRotate(node **root, node *x)
 {
-    //y stored pointer of right child of x
     node *y = x->right;
-
-    //store y's left subtree's pointer as x's right child
     x->right = y->left;
 
-    //update parent pointer of x's right
     if (x->right != NULL)
         x->right->parent = x;
 
-    //update y's parent pointer
     y->parent = x->parent;
 
-    // if x's parent is null make y as root of tree
     if (x->parent == NULL)
         (*root) = y;
 
-    // store y at the place of x
     else if (x == x->parent->left)
         x->parent->left = y;
     else
         x->parent->right = y;
 
-    // make x as left child of y
     y->left = x;
 
-    //update parent pointer of x
     x->parent = y;
 }
 
@@ -212,8 +174,6 @@ node* insert(node* temp,int key){
     return tempHead;
 }
 
-
-
 void inorder(node* temp){
     if (temp==NULL) return ;
     inorder(temp->left);
@@ -233,8 +193,13 @@ void allBlackHeight(node* temp,int count){
 
 int main(){
 
-    int l[15] = {15,21,5,49,3,6,73,8,9,0,11,25,45,78,68};
-    for(int i=0;i<15;i++){
+    // int l[15] = {15,21,5,49,3,6,73,8,9,0,11,25,45,78,68};
+    // for(int i=0;i<15;i++){
+    //     head = insert(head,l[i]);
+    // }
+
+    int l[5] = {10,20,50,5,40};
+    for(int i=0;i<5;i++){
         head = insert(head,l[i]);
     }
 
