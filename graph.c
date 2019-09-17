@@ -97,8 +97,39 @@ node* insertNeighbour(node* temp_a,int key_node,int key){
             }
             insertLink->next = newNeighbour(key);
         }
-        // printf("insertion succes the neighbours of %d are : \n",temp->val);
-        // show_neighbour(temp);
+    }else{
+        printf("node not found\n");
+    }
+
+    return head;
+}
+
+node* deleteNeighbour(node* temp_a,int key_node,int key){
+    node* head = temp_a;
+    node* temp = temp_a;
+    while(temp!=NULL){
+        if (temp->val == key_node){
+            break;
+        }temp = temp->next;
+    }
+    if (temp!=NULL){
+        // printf("node found %d\n",temp->val);
+        neighbour* insertLink = temp->link;
+        if (insertLink->val == key){
+            temp->link = insertLink->next;
+        }
+        neighbour* parent = insertLink;
+        neighbour* child = parent->next;
+        while(child!=NULL){
+            if (child->val == key){
+                parent->next = child->next;
+                break;
+            }parent = parent->next;
+            child = parent->next;
+        }
+        if (insertLink == NULL){
+            printf("neighbour %d not found\n",key);
+        }
     }else{
         printf("node not found\n");
     }
@@ -130,7 +161,12 @@ int main(){
     headNode = insertNeighbour(headNode,5,5);
     headNode = insertNeighbour(headNode,5,6);
     show_all(headNode);
-    
+
+    // deletion of node
+    headNode = deleteNeighbour(headNode,2,3);
+    headNode = deleteNeighbour(headNode,4,10);
+    headNode = deleteNeighbour(headNode,5,5);
+    show_all(headNode);
 }
 
 
