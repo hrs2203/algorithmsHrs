@@ -53,7 +53,7 @@ void insertTrie(trie **root, int lenStr, char charInp[], empNode* newAddress){
     for (int i = 0; i < lenStr; i++){
         int index = CHAR_TO_INDEX(charInp[i]);
         if (tempTrie->childs[index] == NULL){
-            // printf("%c",charInp[i]);
+            printf("memory allocated for %c\n",charInp[i]);
             tempTrie->childs[index] = newTrie();
         }
         tempTrie = tempTrie->childs[index];
@@ -206,6 +206,10 @@ void deleteEmployee(empNode** rootEmp,trie** rootTrie,int firstNameLength,char f
     
     *rootTrie = tempTrieRoot;
     *rootEmp = tempEmpRoot;
+}
+
+void printByLevel(){
+    
 }
 
 
