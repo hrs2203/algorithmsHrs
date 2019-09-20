@@ -17,10 +17,6 @@ typedef struct EmpNode{
 empNode *newEmpNode(int lenName,char empname[]){
     empNode *temp = (empNode *)malloc(sizeof(empNode));
     temp->charLen = lenName;
-    // for(int i= 0; i < lenName; i++){
-    //     temp->empName[i] = empname[i];
-    // }
-    // temp->empName[lenName] = NULL;
     strcpy(temp->empName,empname);
     temp->lev = 0;
     temp->nextNode = NULL;
@@ -115,9 +111,7 @@ void deleteNameInTrie(trie **root, int lenStr, char charInp[]){
     {   
         int index = CHAR_TO_INDEX(charInp[i]);
         if (tempNode->childs[index]==NULL)
-        {   
-            // printf("->");
-            // printf("Node not found\n");
+        {
             return ;
         }
         tempNode = tempNode->childs[index];
@@ -169,20 +163,15 @@ void deleteEmployee(empNode** rootEmp,trie** rootTrie,int firstNameLength,char f
         while(firstNodeChild->nextNode){
             // this will exclude the last child
             firstNodeChild->parentNode = secondNode;
-            // printf("%s-",firstNodeChild->empName);
             firstNodeChild = firstNodeChild->nextNode;
         }
         firstNodeChild->parentNode = secondNode;
-        // printf("%s\n",firstNodeChild->empName);
 
         firstNodeChild->nextNode = secondNodeChild;
         
         secondNode->childNode = firstNode->childNode;
         firstNode->childNode = NULL;
     }
-
-    // printAllChild(secondNode);
-    // printAllChild(firstNode);
 
     // deleting the node itself
     empNode* parentNode = firstNode->parentNode;
@@ -220,7 +209,6 @@ void printByLevel(empNode* head,trie* headTrie){
             if (tempChild == NULL){
                 tempChild = newEmpNode(hc->charLen,hc->empName);
                 tempChild->childNode = searchTrie(headTrie, hc->charLen, hc->empName)->childNode;
-                // printf("%s-added ", hc->empName);
                 tempHead = tempChild;
                 hc = hc->nextNode;
             }
@@ -228,7 +216,6 @@ void printByLevel(empNode* head,trie* headTrie){
             while (hc){
                 tempChild->nextNode = newEmpNode(hc->charLen, hc->empName);
                 tempChild->nextNode->childNode = searchTrie(headTrie, hc->charLen, hc->empName)->childNode;
-                // printf("%s added ", hc->empName);
                 hc = hc->nextNode;
                 tempChild = tempChild->nextNode;
             }
@@ -246,8 +233,6 @@ int main()
 {
     // creating the sudo boss;
     int bossNameLength;
-    // printf("enter the boss name length: ");
-    // scanf("%d",&bossNameLength);
     char bossName[bossNameLength];
     printf("Enter the boss name : ");
     scanf("%s",bossName);
@@ -260,7 +245,7 @@ int main()
     insertTrie(&trieRoot,bossNameLength,bossName,empRoot);
 
     int choice = 1; // defalut value
-    // 1: add | 2: delete | 3: lowest common boss | 4: print by layer | 5: search perations | 0: exit
+    printf("Please enter lower case alphabates only\n");
     printf("you have the following options now \n");
     printf("1 to add a new employee \n");
     printf("2 to delete a employee \n");
@@ -270,28 +255,28 @@ int main()
     printf("0 to quit all \n");
 
     // test insertion cases
-    insertEmpNode(&empRoot, &trieRoot, 1, "b", 1, "a");
-    insertEmpNode(&empRoot, &trieRoot, 1, "c", 1, "a");
-    insertEmpNode(&empRoot, &trieRoot, 1, "d", 1, "a");
-    printByLevel(empRoot,trieRoot);
-    insertEmpNode(&empRoot, &trieRoot, 1, "e", 1, "b");
-    insertEmpNode(&empRoot, &trieRoot, 1, "f", 1, "b");
-    insertEmpNode(&empRoot, &trieRoot, 1, "g", 1, "c");
-    insertEmpNode(&empRoot, &trieRoot, 1, "h", 1, "c");
-    insertEmpNode(&empRoot, &trieRoot, 1, "i", 1, "c");
-    printByLevel(empRoot, trieRoot);
-    insertEmpNode(&empRoot, &trieRoot, 1, "j", 1, "e");
-    insertEmpNode(&empRoot, &trieRoot, 1, "k", 1, "e");
-    insertEmpNode(&empRoot, &trieRoot, 1, "l", 1, "f");
-    insertEmpNode(&empRoot, &trieRoot, 1, "o", 1, "g");
-    printByLevel(empRoot, trieRoot);
-    insertEmpNode(&empRoot, &trieRoot, 1, "m", 1, "l");
-    insertEmpNode(&empRoot, &trieRoot, 1, "n", 1, "l");
-    printByLevel(empRoot, trieRoot);
-    insertEmpNode(&empRoot, &trieRoot, 1, "p", 1, "n");
-    insertEmpNode(&empRoot, &trieRoot, 1, "q", 1, "n");
-    printAllChild(searchTrie(trieRoot,1,"n"));
-    printByLevel(empRoot, trieRoot);
+    // insertEmpNode(&empRoot, &trieRoot, 1, "b", 1, "a");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "c", 1, "a");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "d", 1, "a");
+    // printByLevel(empRoot,trieRoot);
+    // insertEmpNode(&empRoot, &trieRoot, 1, "e", 1, "b");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "f", 1, "b");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "g", 1, "c");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "h", 1, "c");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "i", 1, "c");
+    // printByLevel(empRoot, trieRoot);
+    // insertEmpNode(&empRoot, &trieRoot, 1, "j", 1, "e");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "k", 1, "e");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "l", 1, "f");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "o", 1, "g");
+    // printByLevel(empRoot, trieRoot);
+    // insertEmpNode(&empRoot, &trieRoot, 1, "m", 1, "l");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "n", 1, "l");
+    // printByLevel(empRoot, trieRoot);
+    // insertEmpNode(&empRoot, &trieRoot, 1, "p", 1, "n");
+    // insertEmpNode(&empRoot, &trieRoot, 1, "q", 1, "n");
+    // printAllChild(searchTrie(trieRoot,1,"n"));
+    // printByLevel(empRoot, trieRoot);
 
     while( choice!=0 ){
         printf("Enter you choice : ");
@@ -299,20 +284,14 @@ int main()
 
         if (choice == 1){
             // employee details
-            int NameLength;
-            // printf("enter the employee name length: ");
-            // scanf("%d",&NameLength);
-            
+            int NameLength;         
             char Name[100];
             printf("Enter the employee name : ");
             scanf("%s",Name);
             NameLength = strlen(Name);
             
             // boss details
-            int bossNameLength;
-            // printf("enter the boss name length: ");
-            // scanf("%d",&bossNameLength);
-            
+            int bossNameLength;        
             char bossName[100];
             printf("Enter the boss name : ");
             scanf("%s",bossName);
@@ -327,22 +306,16 @@ int main()
             // deletion
             printf("We will be deleting first employee\n");
             int emp_1_name_len;            
-            // printf("Enter the first employee name lenght : ");
-            // scanf("%d",&emp_1_name_len);
             char emp_1_name[100];
             printf("Enter the first employees name : ");
             scanf("%s",emp_1_name);
             emp_1_name_len = strlen(emp_1_name);
 
             int emp_2_name_len;
-            // printf("Enter the second employee name lenght : ");
-            // scanf("%d",&emp_2_name_len);
             char emp_2_name[100];
             printf("Enter the second employees name : ");
             scanf("%s",emp_2_name);
             emp_2_name_len = strlen(emp_2_name);
-
-            // deleteNameInTrie(&trieRoot,emp_1_name_len,emp_1_name); // -> deletes from trie
 
             deleteEmployee(&empRoot,&trieRoot,emp_1_name_len,emp_1_name,emp_2_name_len,emp_2_name);
 
@@ -350,16 +323,12 @@ int main()
         else if (choice == 3){
             // lowest common boss
             int emp_1_name_len;
-            // printf("Enter the first employee name lenght : ");
-            // scanf("%d",&emp_1_name_len);
             char emp_1_name[100];
             printf("Enter the first employees name : ");
             scanf("%s", emp_1_name);
             emp_1_name_len = strlen(emp_1_name);
 
             int emp_2_name_len;
-            // printf("Enter the second employee name lenght : ");
-            // scanf("%d",&emp_2_name_len);
             char emp_2_name[100];
             printf("Enter the second employees name : ");
             scanf("%s", emp_2_name);
@@ -374,17 +343,11 @@ int main()
 
             else{
                 if (firstEmp->lev != secondEmp->lev){
-                    // if diffrence in level move up;
-                    // printf("level diff\n");
                     while (firstEmp->lev > secondEmp->lev){
-                        // printf("%d moving first from %d to ",secondEmp->lev, firstEmp->lev);
                         firstEmp = firstEmp->parentNode;
-                        // printf("%d\n",firstEmp->lev);
                     }
                     while (firstEmp->lev < secondEmp->lev){
-                        // printf("%d moving second from %d to ",firstEmp->lev,secondEmp->lev);
                         secondEmp = secondEmp->parentNode;
-                        // printf("%d\n",secondEmp->lev);
                     }       
                 }
                 while(firstEmp != secondEmp){
@@ -401,9 +364,6 @@ int main()
         else if (choice == 5){
             // employee details
             int NameLength;
-            // printf("enter the employee name length: ");
-            // scanf("%d",&NameLength);
-            
             char Name[100];
             printf("Enter the employee name : ");
             scanf("%s",Name);
@@ -424,8 +384,6 @@ int main()
         }
         else if (choice == 6){
             int emp_1_name_len;            
-            // printf("Enter the first employee name lenght : ");
-            // scanf("%d",&emp_1_name_len);
             char emp_1_name[100];
             printf("Enter the employees name : ");
             scanf("%s",emp_1_name);
