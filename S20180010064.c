@@ -220,20 +220,24 @@ void printByLevel(empNode* head,trie* headTrie){
             if (tempChild == NULL){
                 tempChild = newEmpNode(hc->charLen,hc->empName);
                 tempChild->childNode = searchTrie(headTrie, hc->charLen, hc->empName)->childNode;
-                    // printf("%s added ", hc->empName);
+                // printf("%s-added ", hc->empName);
                 tempHead = tempChild;
                 hc = hc->nextNode;
             }
+            
             while (hc){
                 tempChild->nextNode = newEmpNode(hc->charLen, hc->empName);
-                tempChild->childNode = searchTrie(headTrie, hc->charLen, hc->empName)->childNode;
+                tempChild->nextNode->childNode = searchTrie(headTrie, hc->charLen, hc->empName)->childNode;
                 // printf("%s added ", hc->empName);
                 hc = hc->nextNode;
                 tempChild = tempChild->nextNode;
             }
         }
         head = head->nextNode;
-    }printf("\n");
+    }
+    printf("\n");
+    // printf("\n passing %s \n",tempHead->empName);
+
     printByLevel(tempHead,headTrie);
 }
 
@@ -286,6 +290,7 @@ int main()
     printByLevel(empRoot, trieRoot);
     insertEmpNode(&empRoot, &trieRoot, 1, "p", 1, "n");
     insertEmpNode(&empRoot, &trieRoot, 1, "q", 1, "n");
+    printAllChild(searchTrie(trieRoot,1,"n"));
     printByLevel(empRoot, trieRoot);
 
     while( choice!=0 ){
