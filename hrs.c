@@ -14,9 +14,20 @@ typedef struct Node
     struct Node *next;
     struct Node *prev;
     struct Neighbour *link;
+    int isVisited;
 } node;
 
 node *headNode;
+
+void makeAllUnvisited(node** temp_a){
+    node* tempHead = *temp_a;
+    node* temp = *temp_a;
+    while(temp){
+        temp->isVisited = 0;
+        temp = temp->next;
+    }
+    *temp_a = tempHead;
+}
 
 node *newNode(int key)
 {
@@ -26,6 +37,7 @@ node *newNode(int key)
     temp->next = NULL;
     temp->prev = NULL;
     temp->link = NULL;
+    temp->isVisited = 0;
     return temp;
 }
 
@@ -176,6 +188,35 @@ void deleteNode(node** temp_a,int node_val){
     *temp_a = tempHead;
 }
 
+// dfs
+
+void DFS(node* temp,node* temp_a){
+    if (temp == NULL)
+        return ;
+    if (temp->isVisited == 0){
+        temp->isVisited = 1;
+        printf("%d ",temp->val);
+        neighbour* target = temp->link;
+        while(target){
+            node* tempS = getNode(temp_a,target->val);
+            DFS(tempS,temp_a);
+            target = target->next;
+        }
+    }
+}
+
+void DFS_head(node* temp_a){
+    printf("enter the node to search from : ");
+    int n;
+    scanf("%d",&n);
+    node* temp = getNode(temp_a,n);
+    if (temp==NULL){
+        printf("Node does not exist\n");
+    }else{
+        DFS(temp,temp_a);
+    }
+}
+
 int main()
 {
     node *headNode = NULL;
@@ -184,6 +225,7 @@ int main()
     insertNode(&headNode,3);
     insertNode(&headNode,4);
     insertNode(&headNode,5);
+    insertNode(&headNode,6);
         
     show_node(headNode);
     // show_rev(headNode);
@@ -192,28 +234,30 @@ int main()
     insertNeighbour(&headNode, 1, 3);
     insertNeighbour(&headNode, 1, 4);
     insertNeighbour(&headNode, 2, 1);
-    insertNeighbour(&headNode, 2, 2);
     insertNeighbour(&headNode, 2, 3);
     insertNeighbour(&headNode, 3, 2);
     insertNeighbour(&headNode, 3, 5);
     insertNeighbour(&headNode, 4, 5);
     insertNeighbour(&headNode, 5, 3);
     insertNeighbour(&headNode, 5, 4);
-    insertNeighbour(&headNode, 5, 5);
+    insertNeighbour(&headNode, 5, 1);
     show_all(headNode);
 
     // deletion of node3
-    deleteNode(&headNode,3);
-    show_all(headNode);
+    // deleteNode(&headNode,3);
+    // show_all(headNode);
 
-    deleteNode(&headNode,1);
-    show_all(headNode);
+    // deleteNode(&headNode,1);
+    // show_all(headNode);
 
-    deleteNode(&headNode,5);
-    show_all(headNode);
+    // deleteNode(&headNode,5);
+    // show_all(headNode);
 
-    deleteNode(&headNode,5);
-    show_all(headNode);
+    // deleteNode(&headNode,5);
+    // show_all(headNode);
+
+    DFS_head(headNode);
+    printf("\n");
 
     return 0;
 }
