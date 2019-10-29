@@ -10,13 +10,15 @@ void belmanFormAlgo(vector<pair<int,int> >adjList[],int start,int nodes){
     int edgeCount = 0;
     int nbr,wt;
 
-    for (int i = 0; i < nodes; i++){
-        edgeCount = adjList[i].size();
-        for (int j = 0; j < edgeCount; j++){
-            nbr = adjList[i].at(j).first;
-            wt  = adjList[i].at(j).second;
-            if (dist[nbr-1] > dist[i]+wt){
-                dist[nbr-1] = dist[i]+wt;
+    for (int x = 0; x < nodes; x++){
+        for (int i = 0; i < nodes; i++){
+            edgeCount = adjList[i].size();
+            for (int j = 0; j < edgeCount; j++){
+                nbr = adjList[i].at(j).first;
+                wt  = adjList[i].at(j).second;
+                if (dist[nbr-1] > dist[i]+wt){
+                    dist[nbr-1] = dist[i]+wt;
+                }
             }
         }
     }
@@ -35,6 +37,8 @@ int main(){
         adjList[a-1].push_back(make_pair(b,w));
         adjList[b-1].push_back(make_pair(a,w));
     }
-    int startPoint = 1;
+    int startPoint;
+    cout << "enter the start point: ";
+    cin >> startPoint;
     belmanFormAlgo(adjList,startPoint,nodes);
 }
