@@ -10,18 +10,16 @@ void belmanFormAlgo(vector<pair<int,int> >adjList[],int start,int nodes){
     int edgeCount = 0;
     int nbr,wt;
 
-    // for (int x = 0; x < nodes; x++){
-        for (int i = 0; i < nodes; i++){
-            edgeCount = adjList[i].size();
-            for (int j = 0; j < edgeCount; j++){
-                nbr = adjList[i].at(j).first;
-                wt  = adjList[i].at(j).second;
-                if (dist[nbr-1] > dist[i]+wt){
-                    dist[nbr-1] = dist[i]+wt;
-                }
+    for (int i = 0; i < nodes; i++){
+        edgeCount = adjList[i].size();
+        for (int j = 0; j < edgeCount; j++){
+            nbr = adjList[i].at(j).first;
+            wt  = adjList[i].at(j).second;
+            if (dist[nbr-1] > dist[i]+wt){
+                dist[nbr-1] = dist[i]+wt;
             }
         }
-    // }
+    }
     
     for (int i = 0; i < nodes; i++)
         cout << dist[i] << ' ';
