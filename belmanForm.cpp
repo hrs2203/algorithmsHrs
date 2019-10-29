@@ -10,24 +10,51 @@ void belmanFormAlgo(vector<pair<int,int> >adjList[],int start,int nodes){
     int edgeCount = 0;
     int nbr,wt;
 
+    int nochange=1;
+
     for (int x = 0; x < nodes; x++){
-        // for each edge
-        for (int i = 0; i < nodes; i++){
-            edgeCount = adjList[i].size();
-            // checking all neighbours
-            for (int j = 0; j < edgeCount; j++){
-                nbr = adjList[i].at(j).first;
-                wt  = adjList[i].at(j).second;
-                if (dist[nbr-1] > dist[i]+wt){
-                    dist[nbr-1] = dist[i]+wt;
+        // if no changes happen then no need to proceed
+        if (nochange==1){
+            nochange = 0;
+            // for each edge
+            for (int i = 0; i < nodes; i++){
+                edgeCount = adjList[i].size();
+                // checking all neighbours
+                for (int j = 0; j < edgeCount; j++){
+                    nbr = adjList[i].at(j).first;
+                    wt  = adjList[i].at(j).second;
+                    if (dist[nbr-1] > dist[i]+wt){
+                        dist[nbr-1] = dist[i]+wt;
+                        nochange = 1;
+                    }
                 }
             }
         }
     }
-    
+
+    // check for negative cycle
+    nochange = 0;
     for (int i = 0; i < nodes; i++){
-        cout << dist[i] << ' ';
-    }cout << endl;
+        edgeCount = adjList[i].size();
+        for (int j = 0; j < edgeCount; j++){
+            nbr = adjList[i].at(j).first;
+            wt  = adjList[i].at(j).second;
+            if (dist[nbr-1] > dist[i]+wt){
+                dist[nbr-1] = dist[i]+wt;
+                nochange = 1;
+            }
+        }
+    }
+
+    if (nochange==1){
+        cout << "negative cycle detected" << endl;
+    }
+    
+    else{
+        for (int i = 0; i < nodes; i++){
+            cout << dist[i] << ' ';
+        }cout << endl;
+    }
 }
 
 int main(){
