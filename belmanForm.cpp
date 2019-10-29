@@ -11,8 +11,10 @@ void belmanFormAlgo(vector<pair<int,int> >adjList[],int start,int nodes){
     int nbr,wt;
 
     for (int x = 0; x < nodes; x++){
+        // for each edge
         for (int i = 0; i < nodes; i++){
             edgeCount = adjList[i].size();
+            // checking all neighbours
             for (int j = 0; j < edgeCount; j++){
                 nbr = adjList[i].at(j).first;
                 wt  = adjList[i].at(j).second;
@@ -23,9 +25,9 @@ void belmanFormAlgo(vector<pair<int,int> >adjList[],int start,int nodes){
         }
     }
     
-    for (int i = 0; i < nodes; i++)
+    for (int i = 0; i < nodes; i++){
         cout << dist[i] << ' ';
-    cout << endl;
+    }cout << endl;
 }
 
 int main(){
