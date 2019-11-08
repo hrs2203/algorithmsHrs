@@ -45,48 +45,6 @@ class cal_date {
     }
 }
 
-class Tag {
-    String tagName;
-    String tagDescription;
-
-    Tag(String tgn, String td) {
-        this.tagName = tgn;
-        this.tagDescription = td;
-    }
-}
-
-class UserProfileSO {
-    String userName;
-    String LinkToUserProfile;
-    int UserID;
-
-    UserProfileSO() {
-
-    }
-}
-
-class StackOverflow {
-    String Question;
-    String LinkToQuestion;
-    // Tag tags;
-    int NoOfViews;
-    int NoOfAnswer;
-    // UserProfileSO user;
-    cal_date postDate;
-    String AnswerSnippet;
-
-    StackOverflow(String question, String LTQ, int NOV, int NOA, cal_date postdate, String ANS) {
-        this.Question = question;
-        this.LinkToQuestion = LTQ;
-        // this.tags = tg; Tag tg,
-        this.NoOfViews = NOV;
-        this.NoOfAnswer = NOA;
-        // this.user = u; UserProfileSO u,
-        this.postDate = postdate;
-        this.AnswerSnippet = ANS;
-    }
-
-}
 
 class readHtmlFile {
     public static String ReadFile(String fileName) throws Exception {
@@ -291,6 +249,116 @@ class readHtmlFile {
         }
         return badgesCount;
     }
+
+    public static String publishDateTime(String questionString) {
+        String[] arr = questionString.split("class=\"relativetime\">");
+        String[] ar = arr[1].split("</span>[ ]*</div>");
+        return ar[0];
+    }
+}
+
+class Tag {
+    String tagName;
+    String tagLink;
+
+    ArrayList<UserProfileSO> userList = new ArrayList<UserProfileSO>();
+    ArrayList<StackOverflow> questionList = new ArrayList<StackOverflow>();
+
+    Tag(String tgn) {
+        this.tagName = tgn;
+        this.tagLink = "stackoverflow.com/questions/tagged/" + tgn;
+    }
+
+    static boolean findTag(ArrayList<Tag> tagList , String tag_name){
+        for (int i = 0; i < tagList.size(); i++) {
+            if ( tag_name.equals(tagList.get(i).tagName) ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void addNewUser(UserProfileSO newUser){
+        this.userList.add(newUser);
+    }
+
+    void addNewQuesiton(StackOverflow newQuestion){
+        this.questionList.add(newQuestion);
+    }
+
+}
+
+class UserProfileSO{
+    String userName;
+    String LinkToUserProfile;
+    int UserID;
+    int goldBadgeCount;
+    int silverBadgeCount;
+    int bronzeBadgeCount;
+
+    void setBadge(int b) {
+        this.goldBadgeCount = 0;
+        this.silverBadgeCount = 0;
+        this.bronzeBadgeCount = b;
+    }
+
+    void setBadge(int s, int b) {
+        this.goldBadgeCount = 0;
+        this.silverBadgeCount = s;
+        this.bronzeBadgeCount = b;
+    }
+
+    void setBadge(int g, int s, int b) {
+        this.goldBadgeCount = g;
+        this.silverBadgeCount = s;
+        this.bronzeBadgeCount = b;
+    }
+
+    UserProfileSO(String user_name, String user_link, int uid, int[] badges) {
+        this.userName = user_name;
+        this.LinkToUserProfile = user_link;
+        this.UserID = uid;
+        if (badges.length == 3) {
+            this.setBadge(badges[0], badges[1], badges[2]);
+        } else if (badges.length == 2) {
+            this.setBadge(badges[0], badges[1]);
+        } else {
+            this.setBadge(badges[0]);
+        }
+    }
+
+    void showUserDetail(){
+        System.out.println("UserName: "+this.userName);
+        System.out.println("UserLink: "+this.LinkToUserProfile);
+        System.out.println("User ID: "+this.UserID);
+        System.out.println("Gold badges: "+this.goldBadgeCount);
+        System.out.println("Silver badges: " + this.silverBadgeCount);
+        System.out.println("Bronze badges: " + this.bronzeBadgeCount);
+    }
+    
+}
+
+class StackOverflow {
+    String Question;
+    String LinkToQuestion;
+    Tag tags;
+    int NoOfViews;
+    int NoOfAnswer;
+    UserProfileSO user;
+    String postDate;
+    String AnswerSnippet;
+
+    StackOverflow(String question, String LTQ, int NOV, int NOA, String postdate, String ANS) {
+        this.Question = question;
+        this.LinkToQuestion = LTQ;
+        // this.tags = tg; Tag tg,
+        this.NoOfViews = NOV;
+        this.NoOfAnswer = NOA;
+        // this.user = u; UserProfileSO u,
+        this.postDate = postdate;
+        this.AnswerSnippet = ANS;
+    }
+
 }
 
 public class Assign08064 {
@@ -308,7 +376,9 @@ public class Assign08064 {
                         + readHtmlFile.readAnswerCount(questionList.get(i)) + " "
                         + readHtmlFile.readViews(questionList.get(i)) + " " + readHtmlFile.UserLink(questionList.get(i))
                         + " " + readHtmlFile.UserID(questionList.get(i)) + " "
-                        + readHtmlFile.UserName(questionList.get(i)));
+                        + " " + readHtmlFile.UserName(questionList.get(i))
+                        + " " + readHtmlFile.publishDateTime(questionList.get(i))
+                );
                 ArrayList<String> tags = readHtmlFile.tagName(questionList.get(i));
                 for (int j = 0; j < tags.size(); j++) {
                     System.out.print(tags.get(j) + " ");
@@ -324,6 +394,5 @@ public class Assign08064 {
                 System.out.println("\n");
             }
         }
-
     }
 }
