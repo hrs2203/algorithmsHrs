@@ -103,16 +103,16 @@ class readHtmlFile{
     public static ArrayList<String> getQuestionList(String inputData) {
         
         // fetching the start point of quesiton block
-        Pattern pattern = Pattern.compile("<div class=\"question-summary\"");
+        Pattern pattern = Pattern.compile("class=\"question-summary\"");
         Matcher StartSearch = pattern.matcher(inputData);
         
         ArrayList<Integer> startPointIndex = new ArrayList<>();
         while (StartSearch.find()) {
             startPointIndex.add(StartSearch.start());
         }
-        
+            
         // fetching the end point of quesiton block
-        pattern = Pattern.compile("</div> [ ]* </div> [ ]* </div> [ ]* </div> [ ]* </div> [ ]* </div>");
+        pattern = Pattern.compile("</div>[ ]*</div>[ ]*</div>[ ]*</div>[ ]*</div>[ ]*</div>");
         Matcher EndSearch = pattern.matcher(inputData);
 
         ArrayList<Integer> endPointIndex = new ArrayList<>();
@@ -125,7 +125,7 @@ class readHtmlFile{
 
         for (int i = 0; i < startPointIndex.size(); i++) {
             String data = inputData.substring(startPointIndex.get(i), endPointIndex.get(i));
-            // data = data.replaceAll(",", "");
+            data = data.replaceAll(",", "");
             questionBlocks.add(data);
         }
 
@@ -222,36 +222,103 @@ class readHtmlFile{
     public static String UserLink(String questionString) {
         Pattern StartSpan = Pattern.compile("<div class=\"user-details\">[ ]*<a href=\"");
         Matcher SpanOpenIndex = StartSpan.matcher(questionString);
-        SpanOpenIndex.find();
 
-        Pattern EndSpan = Pattern.compile("\">[a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">"); // still giving errors
+        Pattern EndSpan = Pattern.compile("\">[- a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">"); 
         Matcher SpanCloseIndex = EndSpan.matcher(questionString);
-        SpanCloseIndex.find();
+
+        if (!SpanOpenIndex.find() || !SpanCloseIndex.find()) {
+            return "";
+        }
 
         String valueStr = questionString.substring(SpanOpenIndex.end(), SpanCloseIndex.start());
 
         return valueStr;
     }
+
+    public static int UserID(String questionString) {
+        Pattern StartSpan = Pattern.compile("<div class=\"user-details\">[ ]*<a href=\"");
+        Matcher SpanOpenIndex = StartSpan.matcher(questionString);
+
+        Pattern EndSpan = Pattern.compile("\">[- a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">"); 
+        Matcher SpanCloseIndex = EndSpan.matcher(questionString);
+
+        if (!SpanOpenIndex.find() || !SpanCloseIndex.find()) {
+            return 1234;
+        }
+
+        String valueStr = questionString.substring(SpanOpenIndex.end(), SpanCloseIndex.start());
+
+        return Integer.valueOf(valueStr.split("/")[2]);
+    }
+
+    public static String UserName(String questionString) {
+        Pattern StartSpan = Pattern.compile("<div class=\"user-details\">[ ]*<a href=\"");
+        Matcher SpanOpenIndex = StartSpan.matcher(questionString);
+
+        Pattern EndSpan = Pattern.compile("\">[- a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">"); 
+        Matcher SpanCloseIndex = EndSpan.matcher(questionString);
+
+        if (!SpanOpenIndex.find() || !SpanCloseIndex.find()) {
+            return "1234";
+        }
+
+        String valueStr = questionString.substring(SpanOpenIndex.end(), SpanCloseIndex.start());
+
+        return valueStr.split("/")[3];
+    }
     
+    public static ArrayList<String> tagName(String questionString) {
+        ArrayList<String> tagList = new ArrayList<String>();
+        String[] arr = questionString.split("<a[ ]*href=\"/questions/tagged/");
+        for (int i = 1; i < arr.length; i++) {
+            tagList.add(arr[i].split("\"[ ]*class=\"post-tag\"")[0]);
+        }
+        return tagList;
+    }
+
+    public static ArrayList<Integer> badgeList(String questionString) {
+        String[] arr = questionString.split("class=\"badgecount\">");
+        ArrayList<Integer> badgesCount = new ArrayList<Integer>();
+        for (int i = 1; i < arr.length; i++) {
+            String[] ar = arr[i].split("</span>[ ]*</span>");
+            badgesCount.add(Integer.valueOf(ar[0]));
+        }
+        return badgesCount;
+    }
     
 
 }
 
 
-
 public class Assign08064 {
     public static void main(String[] args) throws Exception {
-        String data = readHtmlFile.ReadFile("./test.html");
+        String data = readHtmlFile.ReadFile("./sof-dataset/25237.html");
         ArrayList<String> questionList = readHtmlFile.getQuestionList(data);
         for (int i = 0; i < questionList.size(); i++) {
             // System.out.println(questionList.get(i));
-            System.out.println( i+1 +
-                " " +readHtmlFile.readVotes(questionList.get(i)) +
-                " " + readHtmlFile.readAnswerCount(questionList.get(i)) +
-                " " +readHtmlFile.readViews(questionList.get(i))
-                // " " + readHtmlFile.UserLink(questionList.get(i))
+            System.out.println( i+1
+                +" " +readHtmlFile.readVotes(questionList.get(i))
+                +" " + readHtmlFile.readAnswerCount(questionList.get(i))
+                +" " +readHtmlFile.readViews(questionList.get(i))
+                +" " + readHtmlFile.UserLink(questionList.get(i))
+                +" " + readHtmlFile.UserID(questionList.get(i)) 
+                +" " + readHtmlFile.UserName(questionList.get(i))
             );
-            // System.out.println("\n\n\n\n");
+            ArrayList<String>tags = readHtmlFile.tagName(questionList.get(i));
+            for (int j = 0; j < tags.size(); j++) {
+                System.out.print(tags.get(j)+" ");
+            }System.out.println("");
+            // link for tag = /questions/tagged/<tagname>
+            System.out.println(
+                readHtmlFile.readQuestion(questionList.get(i))
+                +"\n"+ readHtmlFile.readQuestionLink(questionList.get(i))
+            );
+            ArrayList<Integer> bcount = readHtmlFile.badgeList(questionList.get(i));
+            for (int j = 0; j < bcount.size(); j++) {
+                System.out.print(bcount.get(j)+" ");
+            }
+            System.out.println("\n\n\n\n"); 
         }
+        
     }
 }
