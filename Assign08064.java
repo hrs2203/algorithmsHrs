@@ -45,21 +45,23 @@ class cal_date {
     }
 }
 
-class Tag{
+class Tag {
     String tagName;
     String tagDescription;
-    Tag(String tgn,String td){
+
+    Tag(String tgn, String td) {
         this.tagName = tgn;
         this.tagDescription = td;
     }
 }
 
-class UserProfileSO{
+class UserProfileSO {
     String userName;
     String LinkToUserProfile;
     int UserID;
-    UserProfileSO(){
-        
+
+    UserProfileSO() {
+
     }
 }
 
@@ -73,26 +75,26 @@ class StackOverflow {
     cal_date postDate;
     String AnswerSnippet;
 
-    StackOverflow( String question , String LTQ, int NOV, int NOA, cal_date postdate, String ANS){
+    StackOverflow(String question, String LTQ, int NOV, int NOA, cal_date postdate, String ANS) {
         this.Question = question;
         this.LinkToQuestion = LTQ;
-        // this.tags = tg;  Tag tg,
+        // this.tags = tg; Tag tg,
         this.NoOfViews = NOV;
         this.NoOfAnswer = NOA;
-        // this.user = u;   UserProfileSO u,
+        // this.user = u; UserProfileSO u,
         this.postDate = postdate;
         this.AnswerSnippet = ANS;
     }
-    
+
 }
 
-class readHtmlFile{
+class readHtmlFile {
     public static String ReadFile(String fileName) throws Exception {
         StringBuilder fileData = new StringBuilder();
         File htmlFile = new File(fileName);
 
         Scanner input = new Scanner(htmlFile);
-        while (input.hasNextLine()){
+        while (input.hasNextLine()) {
             fileData.append(input.nextLine());
         }
         input.close();
@@ -101,16 +103,16 @@ class readHtmlFile{
     }
 
     public static ArrayList<String> getQuestionList(String inputData) {
-        
+
         // fetching the start point of quesiton block
         Pattern pattern = Pattern.compile("class=\"question-summary\"");
         Matcher StartSearch = pattern.matcher(inputData);
-        
+
         ArrayList<Integer> startPointIndex = new ArrayList<>();
         while (StartSearch.find()) {
             startPointIndex.add(StartSearch.start());
         }
-            
+
         // fetching the end point of quesiton block
         pattern = Pattern.compile("</div>[ ]*</div>[ ]*</div>[ ]*</div>[ ]*</div>[ ]*</div>");
         Matcher EndSearch = pattern.matcher(inputData);
@@ -132,7 +134,7 @@ class readHtmlFile{
         return questionBlocks;
     }
 
-    public static int readVotes(String questionString){
+    public static int readVotes(String questionString) {
         Pattern StartSpan = Pattern.compile("<span class=\"vote-count-post \"><strong>");
         Matcher SpanOpenIndex = StartSpan.matcher(questionString);
         SpanOpenIndex.find();
@@ -151,19 +153,19 @@ class readHtmlFile{
     public static int readAnswerCount(String questionString) {
         Pattern StartAnswerCountDiv = Pattern.compile("<div class=\"status answered\">[ ]*<strong>");
         Matcher AnswerCountOpenIndex = StartAnswerCountDiv.matcher(questionString);
-        
+
         if (!AnswerCountOpenIndex.find())
             StartAnswerCountDiv = Pattern.compile("<div class=\"status answered-accepted\">[ ]*<strong>");
-            AnswerCountOpenIndex = StartAnswerCountDiv.matcher(questionString);
-            if (!AnswerCountOpenIndex.find())
-                StartAnswerCountDiv = Pattern.compile("<div class=\"status unanswered\">[ ]*<strong>");
-                AnswerCountOpenIndex = StartAnswerCountDiv.matcher(questionString);
-                AnswerCountOpenIndex.find();
-        
+        AnswerCountOpenIndex = StartAnswerCountDiv.matcher(questionString);
+        if (!AnswerCountOpenIndex.find())
+            StartAnswerCountDiv = Pattern.compile("<div class=\"status unanswered\">[ ]*<strong>");
+        AnswerCountOpenIndex = StartAnswerCountDiv.matcher(questionString);
+        AnswerCountOpenIndex.find();
+
         Pattern EndAnswerCountDiv = Pattern.compile("</strong>answer[s ][ ]*</div>");
         Matcher AnswerCountCloseIndex = EndAnswerCountDiv.matcher(questionString);
         AnswerCountCloseIndex.find();
-        
+
         String valueStr = questionString.substring(AnswerCountOpenIndex.end(), AnswerCountCloseIndex.start());
         int answerCount = Integer.valueOf(valueStr);
 
@@ -173,10 +175,14 @@ class readHtmlFile{
     public static int readViews(String questionString) {
         Pattern StartSpan = Pattern.compile("<div class=\"views \" title=\"[,0-9]* views\">");
         Matcher SpanOpenIndex = StartSpan.matcher(questionString);
-        if (!SpanOpenIndex.find()){
+        if (!SpanOpenIndex.find()) {
             StartSpan = Pattern.compile("<div class=\"views warm\" title=\"[,0-9]* views\">");
             SpanOpenIndex = StartSpan.matcher(questionString);
-            SpanOpenIndex.find();
+            if (!SpanOpenIndex.find()) {
+                StartSpan = Pattern.compile("<div class=\"views hot\" title=\"[,0-9]* views\">");
+                SpanOpenIndex = StartSpan.matcher(questionString);
+                SpanOpenIndex.find();
+            }
         }
 
         Pattern EndSpan = Pattern.compile("views[ ]*</div>");
@@ -223,7 +229,7 @@ class readHtmlFile{
         Pattern StartSpan = Pattern.compile("<div class=\"user-details\">[ ]*<a href=\"");
         Matcher SpanOpenIndex = StartSpan.matcher(questionString);
 
-        Pattern EndSpan = Pattern.compile("\">[- a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">"); 
+        Pattern EndSpan = Pattern.compile("\">[- a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">");
         Matcher SpanCloseIndex = EndSpan.matcher(questionString);
 
         if (!SpanOpenIndex.find() || !SpanCloseIndex.find()) {
@@ -239,7 +245,7 @@ class readHtmlFile{
         Pattern StartSpan = Pattern.compile("<div class=\"user-details\">[ ]*<a href=\"");
         Matcher SpanOpenIndex = StartSpan.matcher(questionString);
 
-        Pattern EndSpan = Pattern.compile("\">[- a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">"); 
+        Pattern EndSpan = Pattern.compile("\">[- a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">");
         Matcher SpanCloseIndex = EndSpan.matcher(questionString);
 
         if (!SpanOpenIndex.find() || !SpanCloseIndex.find()) {
@@ -255,7 +261,7 @@ class readHtmlFile{
         Pattern StartSpan = Pattern.compile("<div class=\"user-details\">[ ]*<a href=\"");
         Matcher SpanOpenIndex = StartSpan.matcher(questionString);
 
-        Pattern EndSpan = Pattern.compile("\">[- a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">"); 
+        Pattern EndSpan = Pattern.compile("\">[- a-zA-Z0-9]*</a>[ ]*<div class=\"-flair\">");
         Matcher SpanCloseIndex = EndSpan.matcher(questionString);
 
         if (!SpanOpenIndex.find() || !SpanCloseIndex.find()) {
@@ -266,7 +272,7 @@ class readHtmlFile{
 
         return valueStr.split("/")[3];
     }
-    
+
     public static ArrayList<String> tagName(String questionString) {
         ArrayList<String> tagList = new ArrayList<String>();
         String[] arr = questionString.split("<a[ ]*href=\"/questions/tagged/");
@@ -285,40 +291,39 @@ class readHtmlFile{
         }
         return badgesCount;
     }
-    
-
 }
-
 
 public class Assign08064 {
     public static void main(String[] args) throws Exception {
-        String data = readHtmlFile.ReadFile("./sof-dataset/25237.html");
-        ArrayList<String> questionList = readHtmlFile.getQuestionList(data);
-        for (int i = 0; i < questionList.size(); i++) {
-            // System.out.println(questionList.get(i));
-            System.out.println( i+1
-                +" " +readHtmlFile.readVotes(questionList.get(i))
-                +" " + readHtmlFile.readAnswerCount(questionList.get(i))
-                +" " +readHtmlFile.readViews(questionList.get(i))
-                +" " + readHtmlFile.UserLink(questionList.get(i))
-                +" " + readHtmlFile.UserID(questionList.get(i)) 
-                +" " + readHtmlFile.UserName(questionList.get(i))
-            );
-            ArrayList<String>tags = readHtmlFile.tagName(questionList.get(i));
-            for (int j = 0; j < tags.size(); j++) {
-                System.out.print(tags.get(j)+" ");
-            }System.out.println("");
-            // link for tag = /questions/tagged/<tagname>
-            System.out.println(
-                readHtmlFile.readQuestion(questionList.get(i))
-                +"\n"+ readHtmlFile.readQuestionLink(questionList.get(i))
-            );
-            ArrayList<Integer> bcount = readHtmlFile.badgeList(questionList.get(i));
-            for (int j = 0; j < bcount.size(); j++) {
-                System.out.print(bcount.get(j)+" ");
+        int val = 25145;
+        for (int x = 0; x < 100; x++) {
+            String start = "./sof-dataset/";
+            String fileName = start + Integer.toString(val + x) + ".html";
+            System.out.println(fileName + "\n----------------------------------------------------");
+            String data = readHtmlFile.ReadFile(fileName);
+            ArrayList<String> questionList = readHtmlFile.getQuestionList(data);
+            for (int i = 0; i < questionList.size(); i++) {
+                // System.out.println(questionList.get(i));
+                System.out.println(i + 1 + " " + readHtmlFile.readVotes(questionList.get(i)) + " "
+                        + readHtmlFile.readAnswerCount(questionList.get(i)) + " "
+                        + readHtmlFile.readViews(questionList.get(i)) + " " + readHtmlFile.UserLink(questionList.get(i))
+                        + " " + readHtmlFile.UserID(questionList.get(i)) + " "
+                        + readHtmlFile.UserName(questionList.get(i)));
+                ArrayList<String> tags = readHtmlFile.tagName(questionList.get(i));
+                for (int j = 0; j < tags.size(); j++) {
+                    System.out.print(tags.get(j) + " ");
+                }
+                System.out.println("");
+                // link for tag = /questions/tagged/<tagname>
+                System.out.println(readHtmlFile.readQuestion(questionList.get(i)) + "\n"
+                        + readHtmlFile.readQuestionLink(questionList.get(i)));
+                ArrayList<Integer> bcount = readHtmlFile.badgeList(questionList.get(i));
+                for (int j = 0; j < bcount.size(); j++) {
+                    System.out.print(bcount.get(j) + " ");
+                }
+                System.out.println("\n");
             }
-            System.out.println("\n\n\n\n"); 
         }
-        
+
     }
 }
