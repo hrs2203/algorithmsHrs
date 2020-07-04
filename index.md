@@ -1,0 +1,11 @@
+### Syllabus for Quiz 2: 11th July 2020 (originally, 18th March 2020)
+- Transport Layer:
+	- QoS, TCP, UDP, TCP Header (around pg. 520 - 527 in Tannenbaum, 3rd Ed)
+- Handshake:
+	- 3-way handshake mechanism
+- Network Layer: 
+	- Flooding, Flow-based Routing, Distance Vector, Link-state Routing,  Congestion control, Virtual Circuits, Datagram (Refer: Tannenbaum)
+- Sliding Window: 
+	- Stop & Wait, Go-back N, Selective ARQ
+- Multiple Access:
+	- TDMA, FDMA, CDMA (Orthogonal codes, eg: Walsh Hadamard)
