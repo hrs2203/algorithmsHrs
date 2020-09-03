@@ -99,6 +99,9 @@ wordSet = list(dataset.keys())
 # rival (7) ==> {211=1, 169=1, 237=2, 194=1, 151=2, 250=1, 251=1}
 # Valencia (3) ==> {201=1, 203=1, 105=1}
 
+readLine = dict() # word, line
+lineCount = 0
+
 startTime = time.time()
 # outputting in sv file
 outputFile = open("output.csv", "w")
@@ -112,6 +115,9 @@ for word in wordSet:
   line+="}\n"
   # print(line)
   outputFile.write(line)
+  lineCount+=1
+  readLine[word] = lineCount
+
 
 outputFile.close()
 endTime = time.time()
@@ -127,3 +133,38 @@ print(f"save time {endTime-startTime}")
 
 #for word in searchedWord:
 #  print(f"{word} : {countSheet[word]}")
+
+## =====================================
+## Read File and Search Word
+
+startTime = time.time()
+
+del wordSet
+del searchedWord
+del countSheet
+del outputFile
+
+endTime = time.time()
+print(f"cache cleaning time {endTime-startTime}")
+
+
+rd = True
+while(rd):
+  print("===================")
+  wd = str(input("Enter String to Search ( 0 to quit ): ")).lower()
+  startTime = time.time()
+  if wd in readLine:
+    # print(f"{readLine[wd]}")
+    fileObject = open(f'./output.csv', "r")
+    fileConent = fileObject.readlines()
+    fileObject.close()
+    print(fileConent[readLine[wd]-1], end="")
+  else:
+    print("Word Not Present")
+  endTime = time.time()
+  if (wd=="0"):
+    rd = False
+  print(f"search time {endTime-startTime}")
+  print("===================")
+  
+
