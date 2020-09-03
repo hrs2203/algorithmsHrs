@@ -156,9 +156,16 @@ while(rd):
   if wd in readLine:
     # print(f"{readLine[wd]}")
     fileObject = open(f'./output.csv', "r")
-    fileConent = fileObject.readlines()
+    fileConent = ""
+    readCounter = 0
+    for line in fileObject:
+      readCounter+=1
+      if (readCounter==readLine[wd]):
+        fileConent = line
+        break
     fileObject.close()
-    print(fileConent[readLine[wd]-1], end="")
+    print(readCounter)
+    print(fileConent, end="")
   else:
     print("Word Not Present")
   endTime = time.time()
