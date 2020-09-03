@@ -1,8 +1,8 @@
-import sys
+import sys, time
 searchedWord = set() # words that have appeared previously
 countSheet = dict() ## dict to store word count
 
-specialChar = { '"', '.', ',', '”',  '“' }
+specialChar = { '"', '.', ',', '”',  '“', "'" }
 
 try:
   e = 101+int(sys.argv[1])
@@ -53,6 +53,7 @@ dataset = dict()
 print(']')
 print(f"Words Found: {searchedWord.__len__()}")
 
+# ordering doc ids
 wordSet = countSheet.keys()
 for word in wordSet:
   # print(word)
@@ -67,27 +68,54 @@ for word in wordSet:
         tempVal[nInd] = tempVal[nInd-1]
         tempVal[nInd-1] = cc
         nInd -= 1
-
-      # dataset[word] = tempVal ## for test
-      dataset[word] = [ x[1]+start for x in tempVal ] # store indexes only, not frequency
+      
+      # [count, index]
+      dataset[word] = [ [x[0],x[1]+start] for x in tempVal ] # store indexes only, not frequency
 
 wordSet = list(dataset.keys())
 
+# startTime = time.time()
+# # outputting in sv file
+# outputFile = open("output.csv", "w")
+# for word in wordSet:
+#   line = ""
+#   indexes = dataset[word]
+#   line = f"{word},"
+#   for i in indexes:
+#     line+=f"{i},"
+#   line+="\n"
+#   # print(line)
+#   outputFile.write(line)
 
+# outputFile.close()
+# endTime = time.time()
+# print(f"save time {endTime-startTime}")
+
+# New output format
+# Stuart (8) ==> {165=2, 189=1, 248=2, 249=1, 180=1, 108=1, 280=1, 252=1}
+# Raju (3) ==> {198=1, 118=1, 183=1}
+# informal (1) ==> {192=1}
+# Pooja (2) ==> {279=1, 269=1}
+# rival (7) ==> {211=1, 169=1, 237=2, 194=1, 151=2, 250=1, 251=1}
+# Valencia (3) ==> {201=1, 203=1, 105=1}
+
+startTime = time.time()
 # outputting in sv file
 outputFile = open("output.csv", "w")
 for word in wordSet:
   line = ""
   indexes = dataset[word]
-  line = f"{word},"
+  line = f"{word} ({len(indexes)}) ==> "
+  line += "{"
   for i in indexes:
-    line+=f"{i},"
-  line+="\n"
+    line+=f" {i[1]}={i[0]},"
+  line+="}\n"
   # print(line)
   outputFile.write(line)
 
 outputFile.close()
-
+endTime = time.time()
+print(f"save time {endTime-startTime}")
 
 # for i in wordSet:
 #   print(f"{i}: {dataset[i]}")
