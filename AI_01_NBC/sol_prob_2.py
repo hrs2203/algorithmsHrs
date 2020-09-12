@@ -2,6 +2,7 @@ TRAINING_FILE = "./train.csv"
 TEST_FILE = "./test.csv"
 
 def readFile(fileName):
+	"""read file from disk and put it in cacher as raw string"""
 	fileContent = ""
 	try:
 		fileObj = open(fileName, 'r')
@@ -12,6 +13,11 @@ def readFile(fileName):
 	return fileContent
 
 def parseFileContent(fileContent):
+	"""
+	parses csv file content and returns 2 array
+	trainSet : input var array
+	resultSet : correct response
+	"""
 	trainSet = list()
 	resultSet = list()
 	try:
@@ -25,23 +31,33 @@ def parseFileContent(fileContent):
 			resultSet.append(response[ind][-1])
 
 	except Exception as e:
-		print(e)
+		# print(e)
 		trainSet = []
 		resultSet = []
 	return [trainSet, resultSet]
 
 
+def mean(arr):
+	"""
+	mean of array on int/float
+	"""
+	return sum(arr)/float(len(arr))
 
-training_content = readFile(TRAINING_FILE)
-train_set, result_set= parseFileContent(training_content)
-
-# print(train_set)
-
-
-## 1. SEPRATE BY CLASS
-## store as dict, key->class, val=[dataset]
+def variance(arr):
+	"""
+	variance of array on int/float
+	"""
+	average = mean(arr)
+	variance = sum([(x-average)**2 for x in arr]) / float(len(arr))
+	return variance
 
 def seprate_by_class(train_set, result_set):
+	"""
+	divides the whole dataset by class
+	response -> 
+		key: className,
+		value: 2d array with each vector as input from trainig data
+	"""
 	response = dict()
 	dataset_len = len(result_set)
 	for i in range(dataset_len):
@@ -51,20 +67,16 @@ def seprate_by_class(train_set, result_set):
 			response[result_set[i]].append(train_set[i])
 	return response
 
-seprated_dataset = seprate_by_class(train_set, result_set)
-
-## UTIL FXN 1.MEAN, 2.STANDARD_DEVIATION
-
-def mean(arr):
-	return sum(arr)/float(len(arr))
-
-def variance(arr):
-	average = mean(arr)
-	variance = sum([(x-average)**2 for x in arr]) / float(len(arr))
-	return variance
-
-
 def get_stats_by_class(seprated_dataset):
+	"""
+	return mean and variance of each feature for each class
+	response:
+		key: className
+		value: [ mean_list, variance_list, prior ]
+		mean_list: [ mean of each var from all input vector ]
+		variance_list: [ variance of each var from all input vector ]
+		prior: 1/3, given in the question sheet
+	"""
 	response = dict()
 	for obj in seprated_dataset.keys():
 		data = seprated_dataset[obj]
@@ -85,13 +97,6 @@ def get_stats_by_class(seprated_dataset):
 		response[obj] = [mean_list, variance_list, 0.33]
 	return response
 
-class_stats = get_stats_by_class(seprated_dataset)
-
-# print(len(class_stats))
-# for i in class_stats:
-# 	print(i)
-# 	print(class_stats[i])
-				
 def getPxy(x, mean, variance):
 	"""
 	x: float
@@ -120,63 +125,50 @@ def getProb(inp_list, class_stats):
 		response[obj] *= class_stats[obj][2] # prior : 0.33
 	return response
 
-### testing and checking
+def test_trained_model(FILE_NAME, class_stats):
+	"""
+	FILE_NAME: CSV FILE NAME to test from
+	class_stats: response from fxn get_stats_by_class() to access the data classwise
+	prints: test stats: {correct}/{totalCount}, correct out of total input size
+	"""
+	test_content = readFile(FILE_NAME)
+	test_set, test_result_set= parseFileContent(test_content)
+	totalCount = len(test_set)
+	correct = 0
 
-totalCOunt = 0
-correct = 0
-
-## testing on trainig set
-test_content = readFile(TRAINING_FILE)
-test_set, test_result_set= parseFileContent(test_content)
-totalCOunt = len(test_set)
-correct = 0
-for i in range(len(test_set)):
-	# print(test_set[i], test_result_set[i])
-	# print(f"expected: {test_result_set[i]}")
-	resp = getProb(test_set[i], class_stats)
-	result = ""
-	res_prob = 0
-	for obj in resp.keys():
-		# print(f"{obj}: {resp[obj]}")
-		if (resp[obj] > res_prob):
-			res_prob = resp[obj]
-			result = obj
-	# print(f"Response: {result}")
-	if (result == test_result_set[i] ):
-		correct+=1
-	else:
-		print(f"expected: {test_result_set[i]}")
+	for i in range(len(test_set)):
+		resp = getProb(test_set[i], class_stats)
+		result = ""
+		res_prob = 0
 		for obj in resp.keys():
-			print(f"{obj}: {resp[obj]}")
-		print(f"Response: {result}")
-		print("=================")
+			if (resp[obj] > res_prob):
+				res_prob = resp[obj]
+				result = obj
+		if (result == test_result_set[i] ):
+			correct+=1
+		# else:
+		#   print(f"expected: {test_result_set[i]}")
+		#   for obj in resp.keys():
+		#     print(f"{obj}: {resp[obj]}")
+		#   print(f"Response: {result}")
+		#   print("=================")
 
-print("*******************************")
-print(f"train test stats: {correct}/{totalCOunt}")
-print("*******************************")
+	print("**************************************")
+	print(f"test stats: {correct}/{totalCount}")
+	print("**************************************")
 
 
-## testiing on testset
-test_content = readFile(TEST_FILE)
-test_set, test_result_set= parseFileContent(test_content)
-totalCOunt = len(test_set)
-correct = 0
-for i in range(len(test_set)):
-	# print(test_set[i], test_result_set[i])
-	# print(f"expected: {test_result_set[i]}")
-	resp = getProb(test_set[i], class_stats)
-	result = ""
-	res_prob = 0
-	for obj in resp.keys():
-		# print(f"{obj}: {resp[obj]}")
-		if (resp[obj] > res_prob):
-			res_prob = resp[obj]
-			result = obj
-	# print(f"Response: {result}")
-	if (result == test_result_set[i] ):
-		correct+=1
-	# print("=================")
 
-print("*******************************")
-print(f"test stats: {correct}/{totalCOunt}")
-print("*******************************")
+if __name__ == "__main__":
+	
+	training_content = readFile(TRAINING_FILE)
+	train_set, result_set = parseFileContent(training_content)
+	seprated_dataset = seprate_by_class(train_set, result_set)
+	class_stats = get_stats_by_class(seprated_dataset)
+
+	# test on given test set
+	test_trained_model(TEST_FILE, class_stats)
+
+	# test on given training set
+	test_trained_model(TRAINING_FILE, class_stats)
+	
