@@ -1,3 +1,10 @@
+"""
+Assumptions Made
+
+1. Preprocessing done and converted the xlsx file to csv as it is easy or read and manipulate.
+2. ...
+"""
+
 import pandas as pd
 import numpy as np
 import os, json
@@ -7,8 +14,7 @@ DESCINATION_FILE = os.path.join(".", "output.json")
 
 CEO_BOSS = "none"
 
-
-class Person:
+class Employee:
     def __init__(self, EMPLOYEE_ID, DESIGNATION, DEPARTMENT, NAME, MANAGER_EMPLOYEE_ID):
         self.EMPLOYEE_ID = EMPLOYEE_ID
         self.DESIGNATION = DESIGNATION
@@ -16,29 +22,52 @@ class Person:
         self.NAME = NAME
         self.MANAGER_EMPLOYEE_ID = MANAGER_EMPLOYEE_ID
         self.reportees = []
-    
-    def generateTree(self):
-        respTree = dict()
-        respTree['EMPLOYEE_ID'] = self.EMPLOYEE_ID
-        respTree['NAME'] = self.NAME
-        respTree['reportees'] = self.reportees
 
-        for index in range(len(respTree['reportees'])):
-            respTree['reportees'][index] = respTree['reportees'][index].generateTree()
+    def fillReportees(self, dataList : list) -> None:
+        """Fill the reportees list recursively using BFS
+
+        Args:
+            dataList (list[Employee]): Data Set read from csv file
+        """
+        self.reportees = []
+        for item in dataList:
+            if self.EMPLOYEE_ID == item.MANAGER_EMPLOYEE_ID:
+                self.reportees.append(item)
+        for item in self.reportees:
+            item.fillReportees(dataList)
+
+    def generateTree(self) -> dict:
+        """Generate tree from this node till leafs as a dict
+
+        Returns:
+            dict: tree from this node.
+        """
+        respTree = dict()
+        respTree["EMPLOYEE_ID"] = self.EMPLOYEE_ID
+        respTree["NAME"] = self.NAME
+        respTree["DEPARTMENT"] = self.DEPARTMENT
+        respTree["DESIGNATION"] = self.DESIGNATION
+        respTree["reportees"] = self.reportees
+
+        for index in range(len(respTree["reportees"])):
+            respTree["reportees"][index] = respTree["reportees"][index].generateTree()
 
         return respTree
 
 
 if __name__ == "__main__":
+
+    # ======== read csv data ===========
     readFile = pd.read_csv(SOURCE_FILE)
     readFile["MANAGER_EMPLOYEE_ID"].fillna(CEO_BOSS, inplace=True)
     count = len(readFile)
 
     readData = list()
 
+    # ======== List of objects ==========
     for i in range(count):
         readData.append(
-            Person(
+            Employee(
                 readFile["EMPLOYEE_ID"][i],
                 readFile["DESIGNATION"][i],
                 readFile["DEPARTMENT"][i],
@@ -47,35 +76,22 @@ if __name__ == "__main__":
             )
         )
 
-    # ==== dict to store the hirarchy ====
-    hirarchy = list()
-
-    tempIds = []
+    # ======== getting the root ===========
+    bossObj = None
 
     for item in readData:
         if item.MANAGER_EMPLOYEE_ID == CEO_BOSS:
-            tempIds.append([item])
-    count -= 1
+            bossObj = item
+            break
     
-    hasChanged = True
+    # ======== generating the tree =========
+    if bossObj != None:
+        bossObj.fillReportees(readData)
+        empTree = bossObj.generateTree()
 
-    while count > 0 and hasChanged:
-        hasChanged = False
-        templ = list()
-        for item in tempIds[-1]:
-            for i in readData:
-                if i.MANAGER_EMPLOYEE_ID == item.EMPLOYEE_ID:
-                    item.reportees.append(i)
-                    templ.append(i)
-                    count -= 1
-                    hasChanged = True
-        if (templ!=[]):
-            tempIds.append(templ)
-    
-    bossObj = tempIds[0][0]
-    empTree = bossObj.generateTree()
-        
-    # ===== dump data in json file =====
-    fileObj = open(DESCINATION_FILE, "w")
-    json.dump(empTree, fileObj)
-    fileObj.close()
+        # ===== dump data in json file =====
+        fileObj = open(DESCINATION_FILE, "w")
+        json.dump(empTree, fileObj, indent=4)
+        fileObj.close()
+    else:
+        print("No CEO found")
