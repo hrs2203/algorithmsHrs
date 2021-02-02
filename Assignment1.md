@@ -27,6 +27,28 @@
 
 2. <b>Identify and analyze various billing models available in Cloud computing.</b>
 
+	The definitions and a short description of pricing schemes which variesdepending on the services are shown below
+
+	01) Time-based : Pricing based on how longa serviceis being used.
+	02) Volume based : Pricing based on thecapacityofa metric.
+	03) Flat rate : Afixed tariff for a specified amount of time.
+	04) Priority pricing : Services are labeled and priced according to their priority.
+	05) Edge pricing : Acalculation is done based on the distance between the service and the user.
+	06) Responsive pricing : Charging is activated only on service congestion.
+	07) Session-oriented : Based on the use given to the session.
+	08) Usage-based : Based on the general use of the service for a period, e.g. a month.
+	09) Content-based : Based on the accessed content.
+	10) Location-based : Based on the access point of the user.
+	11) Service type : Based on the usage of the service.
+	12) Free of charge : No charge for the services.
+	13) Periodical fees : Payment of time to time quantities for the use of a service.
+	14) Pre-paid : The payment for theservice will be in advance.
+	15) Post-paid : The payment for theservice will be after it’s use. 
+	16) Online : The accounting performed while the user makes use of a service.
+	17) Offline : After the use of the service,the accounting process should proceed.
+
+
+
 
 
 3. <b>Explain which computational paradigm- cloud, edge or fog - is more suitable for vehicular Adhoc networks.</b>
@@ -34,6 +56,6 @@
 
 
 4. <b>Explain different data-centers deployed in Cloud Computing. Also provide a detailed comparison between them.</b>
-<b>Answer A:</b> <br>There are two types of data centers that are available in the cloud computing technology.<br><br><b>1. Containerized Data Centers</b>: They are very similar to the modular data centers. Containerized data centers are portable and provide the tools and facilities for a data center to scale effortlessly. They are delivered in a shipping container and widely used as temporary deployments. You can create and add temporary servers for organizations whose data centers are overcrowded but are still unwilling to move to the cloud hosting technology for some reason. The containers data centers come with cooling and power pre-installed and run the risk of a single-point failure bringing down the entire pod.<br><br><b>2. Low-Density Data Centers:</b> Data center operators are unsure about the capacity of their current data centers and whether they need a new data center to manage the higher rank density which may not be feasible considering the time, expenses and resources it will consume. They have an alternative of allowing rapid deployment of high-density racks within the traditional low-density data center. Racks start with a low density and are increased beyond its capacity without losing its efficiency. They can be scaled up and down according to your business demands.
+	<b>Answer A:</b> <br>There are two types of data centers that are available in the cloud computing technology.<br><br><b>1. Containerized Data Centers</b>: They are very similar to the modular data centers. Containerized data centers are portable and provide the tools and facilities for a data center to scale effortlessly. They are delivered in a shipping container and widely used as temporary deployments. You can create and add temporary servers for organizations whose data centers are overcrowded but are still unwilling to move to the cloud hosting technology for some reason. The containers data centers come with cooling and power pre-installed and run the risk of a single-point failure bringing down the entire pod.<br><br><b>2. Low-Density Data Centers:</b> Data center operators are unsure about the capacity of their current data centers and whether they need a new data center to manage the higher rank density which may not be feasible considering the time, expenses and resources it will consume. They have an alternative of allowing rapid deployment of high-density racks within the traditional low-density data center. Racks start with a low density and are increased beyond its capacity without losing its efficiency. They can be scaled up and down according to your business demands.
 
 
