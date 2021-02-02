@@ -1,4 +1,4 @@
-# Assignment 1
+# Cloud Computing Assignment 1
 > Submitted by: Hrishabh Pandey, S20180010064
 
 1. <b>List out the points one should consider while hosting a cloud. Justify each points in detail with suitable example.</b>
@@ -29,23 +29,23 @@
 
 	The definitions and a short description of pricing schemes which variesdepending on the services are shown below
 
-	01) Time-based : Pricing based on how longa serviceis being used.
-	02) Volume based : Pricing based on thecapacityofa metric.
-	03) Flat rate : Afixed tariff for a specified amount of time.
-	04) Priority pricing : Services are labeled and priced according to their priority.
-	05) Edge pricing : Acalculation is done based on the distance between the service and the user.
-	06) Responsive pricing : Charging is activated only on service congestion.
-	07) Session-oriented : Based on the use given to the session.
-	08) Usage-based : Based on the general use of the service for a period, e.g. a month.
-	09) Content-based : Based on the accessed content.
-	10) Location-based : Based on the access point of the user.
-	11) Service type : Based on the usage of the service.
-	12) Free of charge : No charge for the services.
-	13) Periodical fees : Payment of time to time quantities for the use of a service.
-	14) Pre-paid : The payment for theservice will be in advance.
-	15) Post-paid : The payment for theservice will be after it’s use. 
-	16) Online : The accounting performed while the user makes use of a service.
-	17) Offline : After the use of the service,the accounting process should proceed.
+	01. Time-based : Pricing based on how longa serviceis being used.
+	02. Volume based : Pricing based on thecapacityofa metric.
+	03. Flat rate : Afixed tariff for a specified amount of time.
+	04. Priority pricing : Services are labeled and priced according to their priority.
+	05. Edge pricing : Acalculation is done based on the distance between the service and the user.
+	06. Responsive pricing : Charging is activated only on service congestion.
+	07. Session-oriented : Based on the use given to the session.
+	08. Usage-based : Based on the general use of the service for a period, e.g. a month.
+	09. Content-based : Based on the accessed content.
+	10. Location-based : Based on the access point of the user.
+	11. Service type : Based on the usage of the service.
+	12. Free of charge : No charge for the services.
+	13. Periodical fees : Payment of time to time quantities for the use of a service.
+	14. Pre-paid : The payment for theservice will be in advance.
+	15. Post-paid : The payment for theservice will be after it’s use. 
+	16. Online : The accounting performed while the user makes use of a service.
+	17. Offline : After the use of the service,the accounting process should proceed.
 
 
 
