@@ -30,7 +30,7 @@
 
 
 3. <b>Explain which computational paradigm- cloud, edge or fog - is more suitable for vehicular Adhoc networks.</b>
-	When it comes to vehicular Adhoc networks, the services could be provided priorities. 
+	When it comes to vehicular Adhoc networks, the services could be provided priorities. Services like vehical control based on input from censors should be performed using on-device computation (Edge Computing). Where as non trivial services like GPS, Musics such stuff should be impliment with the help of a combination in Cloud and Fog computing. Cloud servers acting as central agents processing and storing latest data for a big region and fog computers collecting/updating/storing data specific to there regions and providing servies to the edge devices (Vehicals) as region specific servers providing data for that region.
 
 
 4. <b>Explain different data-centers deployed in Cloud Computing. Also provide a detailed comparison between them.</b>
