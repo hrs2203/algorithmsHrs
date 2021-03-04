@@ -1,8 +1,44 @@
 """Neural network model."""
 
 from typing import Sequence
-
 import numpy as np
+
+# ============ Util Fxn ===================
+
+def cross_entropy_loss(y: np.ndarray, p: np.ndarray) -> float:
+    """
+    y: np.ndarray, OneHotY
+    p: np.ndarray, prediction Matrix
+    """
+    return -1*np.mean(np.sum( y*np.log(p), axis=1))
+
+def relu_activation(x: np.ndarray) -> np.ndarray:
+    """ Relu Activation Function """
+    return np.maximum(0, x)
+
+def relu_gradient(x: np.ndarray) -> np.ndarray:
+    """ Relu Gradient Calculator """
+    return np.where( x>0, 1, 0 )
+
+def softmax_activation(x: np.ndarray) -> np.ndarray:
+    """ Softmax Activation Fxn """
+    # expoVal = np.exp(x)
+    expoVal = np.exp(x - np.max(x)) # Avoid Overflow
+    expSum = np.sum(expoVal, axis=1, keepdims=True)
+    return expoVal/ expSum
+
+def softmax_gradient(x: np.ndarray) -> np.ndarray:
+    """ Softmax Gradient Calculator """
+    # TODO: ******** WRONG implimentation ********
+    return x*(1-x)
+
+def get_one_hot(x: np.ndarray, classCount: int) -> np.ndarray:
+    assert(len(x.shape)==1)
+    oneHot = np.zeros((*x.shape, classCount))
+    oneHot[range(len(x)), x] = 1.0
+    return oneHot
+
+# =========================================
 
 
 class NeuralNetwork:
@@ -54,18 +90,6 @@ class NeuralNetwork:
                 sizes[i - 1], sizes[i]
             ) / np.sqrt(sizes[i - 1])
             self.params["b" + str(i)] = np.zeros(sizes[i])
-            # self.params[f"b{i}"] = self.params[f"b{i}"].reshape(self.params[f"b{i}"].shape[0],1)
-
-    def __str__(self):
-        object_info = [
-            f"input_size: {self.input_size}",
-            f"hidden_sizes: {self.hidden_sizes}",
-            f"output_size: {self.output_size}",
-            f"num_layers: {self.num_layers}",
-            f"params: {self.params.keys()}",
-            f"layerShapes: { [ [i, self.params[i].shape] for i in self.params ]}"
-        ]
-        return "\n".join(object_info)
 
     def linear(self, W: np.ndarray, X: np.ndarray, b: np.ndarray) -> np.ndarray:
         """Fully connected (linear) layer.
@@ -78,9 +102,12 @@ class NeuralNetwork:
         Returns:
             the output
         """
-        # TODO: implement me :
+        # TODO: implement me
+        
+        assert( len(X.shape)==2 )
+        assert( X.shape[1]==W.shape[0] )
 
-        return np.dot(X, W) + b
+        return np.dot(X,W)+b
 
     def relu(self, X: np.ndarray) -> np.ndarray:
         """Rectified Linear Unit (ReLU).
@@ -91,7 +118,7 @@ class NeuralNetwork:
         Returns:
             the output
         """
-        # TODO: implement me :
+        # TODO: implement me
         return np.maximum(X, 0)
 
     def softmax(self, X: np.ndarray) -> np.ndarray:
@@ -103,11 +130,8 @@ class NeuralNetwork:
         Returns:
             the output
         """
-        # TODO: implement me :
-        allExp = np.exp(X)
-        totalSum = np.sum(allExp, axis=1)
-        totalSum = totalSum.reshape(totalSum.shape[0], 1)
-        return allExp / totalSum
+        # TODO: implement me
+        return softmax_activation(X)
 
     def forward(self, X: np.ndarray) -> np.ndarray:
         """Compute the scores for each class for all of the data samples.
@@ -122,64 +146,29 @@ class NeuralNetwork:
             Matrix of shape (N, C) where scores[i, c] is the score for class
                 c on input X[i] outputted from the last layer of your network
         """
+        
+        assert( len(X.shape)==2 )
+
         self.outputs = {"h0": X}
         # TODO: implement me. You'll want to store the output of each layer in
         # self.outputs as it will be used during back-propagation. You can use
         # the same keys as self.params. You can use functions like
         # self.linear, self.relu, and self.softmax in here.
 
-        ## RELU for inner layers -> self.num_layers-1 .
         for layer in range(1, self.num_layers):
-            self.outputs[f"h{layer}"] = self.relu(
-                self.linear(
-                    self.params[f"W{layer}"],
-                    self.outputs[f"h{layer-1}"],
-                    self.params[f"b{layer}"],
-                )
-            )
-
-        ## Softmax for output layer.
-        self.outputs[f"h{self.num_layers}"] = self.softmax(
-            self.linear(
-                self.params[f"W{self.num_layers}"],
-                self.outputs[f"h{self.num_layers-1}"],
-                self.params[f"b{self.num_layers}"],
-            )
-        )
+            self.outputs[f"h{layer}"] = self.relu(self.linear(
+                self.params[f"W{layer}"],
+                self.outputs[f"h{layer-1}"],
+                self.params[f"b{layer}"],
+            ))
+        
+        self.outputs[f"h{self.num_layers}"] = self.softmax(self.linear(
+            self.params[f"W{self.num_layers}"],
+            self.outputs[f"h{self.num_layers-1}"],
+            self.params[f"b{self.num_layers}"],
+        ))
 
         return self.outputs[f"h{self.num_layers}"]
-
-    def getPred(self, pred: np.ndarray) -> np.ndarray:
-        # TODO: Optimize me.
-        """ CUSTOM CLASS: List of index of class with highest score """
-        outputClass = []
-        for l in pred:
-            i = 0
-            for j in range(len(l)):
-                if l[j] > l[i]:
-                    i = j
-            outputClass.append(i)
-        return np.array(outputClass)
-
-    def crossEntropyLoss(self, Y: np.ndarray, y: np.ndarray) -> float:
-        """
-        Y: real Values
-        y: predicted Values from gradient
-        """
-        # TODO: implement Me
-        # formula used: (1/n)*(sum( y*ln(p)+( (1-y)*ln(1-p) ) ))
-
-        count = len(Y)
-
-        oneHotY = np.zeros(y.shape)
-        for i in range(count):
-            oneHotY[i][Y[i]]=1.0
-
-        totalLoss = -1*np.sum(
-            np.sum( oneHotY*np.log(y) + ((1-oneHotY)*np.log(1-y)), axis=1 )/self.output_size
-        )/count
-
-        return totalLoss
 
     def backward(
         self, X: np.ndarray, y: np.ndarray, lr: float, reg: float = 0.0
@@ -199,70 +188,33 @@ class NeuralNetwork:
         """
         self.gradients = {}
         loss = 0.0
-
-        forwardPass = self.forward(X)
-        loss = self.crossEntropyLoss(y, forwardPass)
-
-        count = len(y)
-        oneHotY = np.zeros(forwardPass.shape)
-        for i in range(count):
-            oneHotY[i][y[i]]=1.0
-
-
-        oneHotY = oneHotY.T
-        forwardPass = forwardPass.T
-
-        # print()
-        # print(f"oneHotY.shape: {oneHotY.shape}")
-        # print(f"forwardPass.shape: {forwardPass.shape}")
-
-        dl = np.sum( ((oneHotY/forwardPass)+((1-oneHotY)/(1-forwardPass))) * ( forwardPass*(1-forwardPass) ) , axis=1)
-        
-        prev_inpSm = np.sum(self.outputs[f"h{self.num_layers-1}"].T, axis=1)
-        prev_inpSm = prev_inpSm.reshape(prev_inpSm.shape[0],1)
-
-        # print()
-        # print(f"dl.shape: {dl.shape}")
-        # print(f"prev_inpSm.shape: {prev_inpSm.shape}")
-
-        self.gradients[f"dw{self.num_layers}"] = np.dot(prev_inpSm, dl.reshape(1,dl.shape[0]))
-        self.gradients[f"db{self.num_layers}"] = dl
-
-        # print(f'dw: {self.gradients[f"dw{self.num_layers}"].shape}')
-        # print(f'db: {self.gradients[f"db{self.num_layers}"].shape}')
-
-        self.params[f"W{self.num_layers}"] -= lr*self.gradients[f"dw{self.num_layers}"]
-        self.params[f"b{self.num_layers}"] -= lr*self.gradients[f"db{self.num_layers}"]
-        
-
-        for i in range(1, self.num_layers):
-            # print(f"{self.num_layers-i} started ...")
-            prev_inpSm = np.sum(self.outputs[f"h{self.num_layers-i-1}"].T, axis=1)
-            prev_inpSm = prev_inpSm.reshape(prev_inpSm.shape[0],1)
-            # print(f"prev_inpSm.shape: {prev_inpSm.shape}")
-            dl = (
-                np.sum( self.gradients[f"dw{self.num_layers-i+1}"], axis=1) * 
-                np.sum( np.maximum(self.outputs[f"h{self.num_layers-i}"].T, 0), axis=1 )
-            )
-            # print(f'dl: {dl.shape}')
-
-            self.gradients[f"dw{self.num_layers-i}"] = np.dot(prev_inpSm, dl.reshape(1,dl.shape[0]))
-            self.gradients[f"db{self.num_layers-i}"] = dl
-
-            self.params[f"W{self.num_layers-i}"] -= lr*self.gradients[f"dw{self.num_layers-i}"]
-            self.params[f"b{self.num_layers-i}"] -= lr*self.gradients[f"db{self.num_layers-i}"]
-
-            # print(f"{self.num_layers-i} done ...")
-            
-            
-
-        # Calculate gradient and make adjustements.
-
-        # self.gradient[f"h{self.num_layers}"] = 
-
         # TODO: implement me. You'll want to store the gradient of each layer
         # in self.gradients if you want to be able to debug your gradients
         # later. You can use the same keys as self.params. You can add
         # functions like self.linear_grad, self.relu_grad, and
         # self.softmax_grad if it helps organize your code.
+
+        oneHoyY = get_one_hot(y, self.output_size)
+        
+        loss = cross_entropy_loss(oneHoyY, self.outputs[f"h{self.num_layers}"])
+
+        # ============ Calculating Gradient ==================
+        dl = self.outputs[f"h{self.num_layers}"] - oneHoyY
+
+        self.gradients[f"dw{self.num_layers}"] = self.outputs[f"h{self.num_layers-1}"].T.dot(dl)
+        self.gradients[f"db{self.num_layers}"] = dl.T.mean(axis=1)
+
+        for layer in range(self.num_layers-1, 0, -1):
+            dl = dl.T.dot(relu_gradient(self.outputs[f"h{layer}"]))
+            dl = dl.T.mean(axis=1, keepdims=True).T
+            self.gradients[f"dw{layer}"] = self.outputs[f"h{layer-1}"].T.dot(dl)
+            self.gradients[f"db{layer}"] = dl.squeeze()
+        # ====================================================
+
+        # =============== Updading Parameters ================
+        for layer in range(1, self.num_layers+1):
+            self.params[f"W{layer}"] -= lr*self.gradients[f"dw{layer}"]
+            self.params[f"b{layer}"] -= lr*self.gradients[f"db{layer}"]
+        # ====================================================
+
         return loss
