@@ -200,15 +200,41 @@ class NeuralNetwork:
 
         # ============ Calculating Gradient ==================
         dl = self.outputs[f"h{self.num_layers}"] - oneHoyY
+        # dl = dl.T.mean(axis=1, keepdims=True).T
+        
+        # print(f"dl{self.num_layers}: {dl.shape}")
+        
+        # self.gradients[f"dw{self.num_layers}"] = self.outputs[f"h{self.num_layers-1}"].T.dot(dl)
+        prevInp = self.outputs[f"h{self.num_layers-1}"].T
+        self.gradients[f"dw{self.num_layers}"] = prevInp.dot(dl)
 
-        self.gradients[f"dw{self.num_layers}"] = self.outputs[f"h{self.num_layers-1}"].T.dot(dl)
         self.gradients[f"db{self.num_layers}"] = dl.T.mean(axis=1)
 
+        dl = dl.T.mean(axis=1, keepdims=True).T
+        
+        # print()
         for layer in range(self.num_layers-1, 0, -1):
-            dl = dl.T.dot(relu_gradient(self.outputs[f"h{layer}"]))
+
+            presentInp = self.outputs[f"h{layer}"].T.mean(axis=1, keepdims=True).T
+
+            dl = dl.T.dot(relu_gradient(presentInp))
             dl = dl.T.mean(axis=1, keepdims=True).T
-            self.gradients[f"dw{layer}"] = self.outputs[f"h{layer-1}"].T.dot(dl)
+
+            prevLayer = self.outputs[f"h{layer-1}"].T.mean(axis=1, keepdims=True)
+
+            # print(f"dl{layer}: {dl.shape}")
+            # print(f'prevLayer: {prevLayer.shape}')
+            
+            self.gradients[f"dw{layer}"] = prevLayer.dot(dl)
+            
+            # print(f'dw{layer}: {self.gradients[f"dw{layer}"].shape}')
+            # print(f'W {layer}: {self.params[f"W{layer}"].shape}')
+            
             self.gradients[f"db{layer}"] = dl.squeeze()
+            
+            # print(f'db{layer}: {self.gradients[f"db{layer}"].shape}')
+            # print(f'B {layer}: {self.params[f"b{layer}"].shape}')
+            # print()
         # ====================================================
 
         # =============== Updading Parameters ================
